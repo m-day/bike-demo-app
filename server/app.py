@@ -7,7 +7,7 @@ import random
 import os
 
 
-app = Flask(__name__, static_folder="../client/build/static", template_folder="../client/build")
+app = Flask(__name__, static_folder="/client/build/static", template_folder="/client/build")
 CORS(app)
 
 @app.route("/")
