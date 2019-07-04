@@ -1,0 +1,16 @@
+.header-right {
+    float: right;
+}
+
+.header-left {
+    float: left;
+}
+
+div.card-header {
+    text-transform: uppercase;
+}
+
+.card-title .badge-info {
+    margin-bottom: 5px;
+}
+
