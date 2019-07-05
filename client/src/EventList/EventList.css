@@ -1,3 +1,5 @@
-.event-list {
+.event-container {
     list-style: none;
+    max-width:80%;
+    margin: 0 auto;
 }

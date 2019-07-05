@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Event from '../Event';
 import EventFilters from "../EventFilters";
 import CardGroup from 'react-bootstrap/CardGroup'
+import Accordion from 'react-bootstrap/Accordion'
 import './EventList.css';
 
 export default class EventList extends Component {
@@ -50,23 +51,13 @@ export default class EventList extends Component {
     });
   }
 
-  groupEvents(events, cols=3) {
+  groupEvents(events, cols=1) {
     var groupedEvents = [];
     var group = [];
     var group_key = 0;
     if (events.length > 0) {
       for (var i = 0; i < events.length; i++){
-        var event = <Event 
-                      key={i}
-                      date={events[i].date.$date} 
-                      state={events[i].state}
-                      name={events[i].name}
-                      time={events[i].time}
-                      location={events[i].location}
-                      shop={events[i].shop}
-                      phone={events[i].phone}
-                      brand={events[i].brand}
-                      />;
+        var event = this.formatEvent(events[i], i);
         group.push(event);
         // groups of three or whatever is left
         if ((i+1) % cols === 0 || i === events.length - 1) {
@@ -83,6 +74,33 @@ export default class EventList extends Component {
     return groupedEvents;
   }
 
+  createAccordion(events) {
+    var eventcards = [];
+    var accordion;
+    for (var i = 0; i < events.length; i++){
+      var event = this.formatEvent(events[i], i);
+      eventcards.push(event);
+    }
+    accordion = <Accordion className="event-container">{eventcards}</Accordion>
+    return accordion;
+  }
+
+  formatEvent(event, key) {
+    var formattedEvent = <Event 
+            key={key}
+            id={key}
+            date={event.date.$date} 
+            state={event.state}
+            name={event.name}
+            time={event.time}
+            location={event.location}
+            shop={event.shop}
+            phone={event.phone}
+            brand={event.brand}
+            />;
+    return formattedEvent;
+  }
+
   filterBrandClick(brand) {
     var self = this;
     this.setState({'selectedBrand': this.state.brands.indexOf(brand)});
@@ -93,7 +111,7 @@ export default class EventList extends Component {
   }
   
   render() {
-    var events = this.groupEvents(this.state.events);
+    var accordion = this.createAccordion(this.state.events);
     return (
       <>
       <EventFilters
@@ -102,7 +120,7 @@ export default class EventList extends Component {
         selectedBrand={this.state.selectedBrand}
       />
       <div>
-        {events}
+        {accordion}
       </div>
       </>
     );
