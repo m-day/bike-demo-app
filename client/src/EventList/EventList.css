@@ -1,5 +1,19 @@
 .event-container {
     list-style: none;
-    max-width:80%;
+    max-width:60%;
     margin: 0 auto;
+}
+
+.title div {
+    display: inline-block;
+    text-align: center;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.event-list h3 {
+    margin: 20px 0;
 }

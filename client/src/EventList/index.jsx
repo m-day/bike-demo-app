@@ -31,47 +31,52 @@ export default class EventList extends Component {
     });
   }
 
+  preprocess(events) {
+    var processed = events.map((event) => {
+      event['month'] = this.getMonth(event.date.$date);
+      event['month_day'] = event['month']  + ' ' + new Date(event.date.$date).getDate();
+      return event;
+    }); 
+    return processed;
+  }
+
   getAllEvents() {
     var url = 'http://localhost:5000/allevents';
+    var self = this;
     return fetch(url, {
         method: 'GET'
     })
     .then(function(response) {
         return response.json();
+    })
+    .then(function(events) {
+        return self.preprocess(events);
     });
   }
 
   getEvents(brand) {
     var url = 'http://localhost:5000/events/' + brand;
+    var self = this;
     return fetch(url, {
         method: 'GET'
     })
     .then(function(response) {
         return response.json();
+    })
+    .then(function(events) {
+        return self.preprocess(events);
     });
   }
 
-  groupEvents(events, cols=1) {
-    var groupedEvents = [];
-    var group = [];
-    var group_key = 0;
-    if (events.length > 0) {
-      for (var i = 0; i < events.length; i++){
-        var event = this.formatEvent(events[i], i);
-        group.push(event);
-        // groups of three or whatever is left
-        if ((i+1) % cols === 0 || i === events.length - 1) {
-          groupedEvents.push(
-            <CardGroup key={group_key}>
-              {group}
-            </CardGroup>
-          );
-          group_key++
-          group = [];
-        }
-      }
-    }
-    return groupedEvents;
+  // returns the long string month of a date
+  getMonth(date) {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    date = new Date(date);
+    var month = monthNames[date.getMonth()];
+
+    return month;
   }
 
   createAccordion(events) {
@@ -85,7 +90,9 @@ export default class EventList extends Component {
     return accordion;
   }
 
+  // convert raw event into event component
   formatEvent(event, key) {
+
     var formattedEvent = <Event 
             key={key}
             id={key}
@@ -97,6 +104,8 @@ export default class EventList extends Component {
             shop={event.shop}
             phone={event.phone}
             brand={event.brand}
+            month={event.month}
+            month_day={event.month_day}
             />;
     return formattedEvent;
   }
@@ -109,20 +118,57 @@ export default class EventList extends Component {
       self.setState({events: events});
     });
   }
+
+  // Creates the List of Event elements
+  getList(events, groupBy = '') {
+    // Group list into multiple accordions based on key
+    if (groupBy !== '') {
+      var accordions = [];
+      var groupedEvents = this.groupBy(events, 'month');
+      console.log(groupedEvents);
+      for (var prop in groupedEvents) {
+        const accordion = this.createAccordion(groupedEvents[prop]);
+        accordions.push(<h3>{prop}</h3>);
+        accordions.push(accordion);
+      } 
+
+      return accordions;
+    // or just one big accordion
+    } else {
+      return this.createAccordion(events);
+    }
+  }
+
+  groupBy(arr, prop) {
+    return arr.reduce(function (acc, obj) {
+      var key = obj[prop];
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(obj);
+      return acc; 
+    }, {});
+  }
   
   render() {
-    var accordion = this.createAccordion(this.state.events);
+    const listLength = this.state.events.length;
+    var list;
+    if (listLength > 0) {
+      list = this.getList(this.state.events, 'brand');
+    } else {
+      list = <p>There are no events that fit the current criteria</p>;
+    }
     return (
-      <>
+      <div className='event-list'>
       <EventFilters
         filterBrandClick={this.filterBrandClick}
         options={this.state.brands}
         selectedBrand={this.state.selectedBrand}
       />
       <div>
-        {accordion}
+        {list}
       </div>
-      </>
+      </div>
     );
   }
 }

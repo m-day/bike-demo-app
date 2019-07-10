@@ -14,3 +14,7 @@ div.card-header {
     margin-bottom: 5px;
 }
 
+span.title {
+    display: inline-block;
+    text-align: center;
+}
