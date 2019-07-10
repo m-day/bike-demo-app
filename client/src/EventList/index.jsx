@@ -22,7 +22,7 @@ export default class EventList extends Component {
   componentDidMount() {
     var self = this;
     this.getAllEvents()
-    .then(function(events) {
+    .then((events) => {
       self.setState({events: events});
       var brands = events.map((event) => {
         return event.brand;
@@ -46,10 +46,10 @@ export default class EventList extends Component {
     return fetch(url, {
         method: 'GET'
     })
-    .then(function(response) {
+    .then((response) => {
         return response.json();
     })
-    .then(function(events) {
+    .then((events) => {
         return self.preprocess(events);
     });
   }
@@ -60,10 +60,10 @@ export default class EventList extends Component {
     return fetch(url, {
         method: 'GET'
     })
-    .then(function(response) {
+    .then((response) => {
         return response.json();
     })
-    .then(function(events) {
+    .then((events) => {
         return self.preprocess(events);
     });
   }
@@ -114,7 +114,7 @@ export default class EventList extends Component {
     var self = this;
     this.setState({'selectedBrand': this.state.brands.indexOf(brand)});
     this.getEvents(brand)
-    .then(function(events) {
+    .then((events) => {
       self.setState({events: events});
     });
   }
@@ -140,7 +140,7 @@ export default class EventList extends Component {
   }
 
   groupBy(arr, prop) {
-    return arr.reduce(function (acc, obj) {
+    return arr.reduce((acc, obj) => {
       var key = obj[prop];
       if (!acc[key]) {
         acc[key] = [];
